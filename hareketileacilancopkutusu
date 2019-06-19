@@ -23,6 +23,5 @@ void _delay(float seconds){
 
 }
 
-void _loop(){    
-
+void _loop(){    //
 }
