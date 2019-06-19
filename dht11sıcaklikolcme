@@ -1,0 +1,21 @@
+#include <DHT11.h>  //dht11 kütüphanesini ekliyoruz. 
+
+ int pin=6; //sensörü bağladığımız pini tanımlıyoruz.
+DHT11 dht11(pin);//sensörümüze dht11 adını verdik.
+void setup()
+{
+Serial.begin(9600);//Seri habarleşmeyi başlatıyoruz.
+}
+void loop()
+{
+float nem,sicaklik;
+int oku = dht11.read(nem,sicaklik); //sensördeki veriler okunuyor.
+Serial.print("nem%"); 
+Serial.print(nem, 2);//nemi serial ekrana aktarıyoruz
+Serial.print("sicaklik");
+//Sıcaklık santigrat derece olarak okutuyor ve seri porta gönderiyoruz
+Serial.print(sicaklik, 2);
+Serial.println();
+delay(2000); // 2 Saniye bekletiyoruz
+}
+
