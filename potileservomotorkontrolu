@@ -1,0 +1,31 @@
+#include <Servo.h>
+
+const int pot=A1;  
+
+Servo servomotor;      
+
+int potdurum=0;     
+
+int pos = 0;       
+
+void setup(){
+
+  servomotor.attach(9); 
+
+} 
+
+void loop(){
+
+  potdurum=analogRead(pot);
+
+  pos= map(potdurum,0,1023,0,180);
+
+  { 
+
+    servomotor.write(pos);
+
+  }
+
+
+
+}
