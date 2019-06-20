@@ -1,0 +1,42 @@
+#include <Wire.h>
+#include <SoftwareSerial.h>
+
+double angle_rad = PI/180.0;
+double angle_deg = 180.0/PI;
+double nem;
+
+void setup(){
+    pinMode(A0+0,INPUT);
+    pinMode(3,OUTPUT);
+    pinMode(9,OUTPUT);
+    pinMode(2,OUTPUT);
+}
+
+void loop(){
+    nem = analogRead(A0+0);
+    if((nem) &lt; (500)){
+        digitalWrite(3,1);
+        _delay(0.3);
+        digitalWrite(3,0);
+    }
+    if(((nem) &gt; (500)) &amp;&amp; ((nem) &lt; (800))){
+        digitalWrite(9,1);
+        digitalWrite(2,1);
+        _delay(0.3);
+        digitalWrite(9,0);
+        digitalWrite(2,0);
+        _delay(0.3);
+    }else{
+        digitalWrite(9,0);
+        _delay(0.3);
+    }
+    _loop();
+}
+
+void _delay(float seconds){
+    long endTime = millis() + seconds * 1000;
+    while(millis() &lt; endTime)_loop();
+}
+
+void _loop(){
+}
