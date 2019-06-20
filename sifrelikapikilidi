@@ -1,0 +1,213 @@
+#include <Keypad.h>  // keypad kütüphanesini yukarıdaki linkten kurduktan sonra bu kodumuzla keypad kütüphanesini çalıştırıyoruz.
+
+#include <Servo.h>   // servo kütüphanesini de çalıştırıyoruz
+
+
+int ledPinOpen=11;      // yeşil ledimizin 11 pinine bağlı olduğunu gösterip yakıyoruz.
+
+int ledPinClose=12;     // kırmızı ledimizin 12 pinine bağlı olduğunu gösterip kapatıyoruz.
+
+const byte numRows= 4;  // keypad satır sayısını belirtiyoruz.
+
+const byte numCols= 4;  // keypad sütün sayısını belirtiyoruz.    
+
+int control = 0;
+
+int counter = 0;
+
+String enter_password;     // girilen şifreyi tutarsa.
+
+String password = "#589"; // kendimizin belirlediği şifreyi gösteriyoruz.
+
+int buzzerPin=13; // Buzzerın artı(+) ayağı 13 pinine bağlı olduğunu söylüyoruz.
+
+Servo myservomotor;
+
+
+// Keypadimizdeki tuşları gösteriyoruz.
+
+char keymap[numRows][numCols]= 
+
+{
+
+{'1', '2', '3', 'A'}, 
+
+{'4', '5', '6', 'B'}, 
+
+{'7', '8', '9', 'C'},
+
+{'*', '0', '#', 'D'}
+
+};
+
+
+// bağlantı bacaklarını belirtiyoruz.
+
+byte rowPins[numRows] = {2,3,4,5}; 
+
+byte colPins[numCols]= {6,7,8,9}; 
+
+
+// keypad i set ediyoruz.
+
+Keypad myKeypad= Keypad(makeKeymap(keymap), rowPins, colPins, numRows, numCols);
+
+
+void setup()
+
+{
+
+  Serial.begin(9600);
+
+  myservomotor.attach(10);      // Servo motorumuzun yani adını bu kodda myservomotor koyduğumuz motorun 10 pinine bağlı olduğunu gösteriyoruz.
+
+  myservomotor.write(0);        //ilk başta servo motorun açısını 0 yapıyoruz.
+
+  pinMode(ledPinOpen,OUTPUT);   // led pinlerini çıkış olarak belitliyoruz.
+
+  pinMode(ledPinClose,OUTPUT);  
+
+pinMode(buzzerPin,OUTPUT); // Buzzer'in bağlı olduğu pini çıkış olarak ayarlıyoruz.
+
+}
+
+
+void loop()
+
+{
+
+  char keypressed = myKeypad.getKey();  // keypadden gelen değer
+
+  if (keypressed != NO_KEY) {
+
+    Serial.print(keypressed);
+
+    // # tuşuna basıldı ise control 1 olur password kontrole geçer diyoruz.
+
+    if(keypressed == '#') {  
+
+      control = 1;
+
+    }
+
+    
+
+    }
+
+    // Kapıyı Kapatmak için B ye basıyoruz.
+
+    if(keypressed == 'B') {
+
+      for(int value = 90; value &gt; 1; value--){
+
+        myservomotor.write(value);
+
+        digitalWrite(ledPinOpen,0); 
+
+        digitalWrite(ledPinClose,1); 
+
+      }
+
+    }
+
+    // # tuşuna basıldı ise gerekli kontrolleri yap diyoruz.
+
+    if(control == 1){
+
+      enter_password = enter_password + keypressed;
+
+      counter++;
+
+      Serial.print("sifre " + enter_password );
+
+      // password doğru ise
+
+      if(enter_password == password) {
+
+        Serial.print("kapı açıldı");
+
+        for(int value = 0; value &lt; 90; value++) {
+
+          myservomotor.write(value);
+
+        }
+
+        digitalWrite(ledPinOpen,1); 
+
+        digitalWrite(buzzerPin,HIGH); //Buzzer'a güç göndererek ses çıkarmasını sağlıyoruz.
+
+ delay(250);                  // 1 saniye boyunca çalmasını söylüyoruz.
+
+ digitalWrite(ledPinClose,1);  // kırmızı ışık yanmasını istiyoruz.
+
+ digitalWrite(buzzerPin,LOW); //Buzzerın gücünü kesiyoruz ve susmasını sağlıyoruz.
+
+ delay(250);   
+
+        
+
+        digitalWrite(ledPinClose,0);
+
+        delay(2000);  // gecikme
+
+        digitalWrite(ledPinOpen,0); 
+
+        enter_password = "";
+
+        control = 0;
+
+        counter = 0;
+
+      }
+
+      // password yanlış veya 4 den fazla girildi ise
+
+      else if ((enter_password != password) &amp;&amp; (counter &gt; 4) ) {
+
+        Serial.print("hatalı giriş");
+
+        for(int value = 90; value &gt; 1; value--){
+
+          myservomotor.write(value);
+
+        }
+
+        digitalWrite(buzzerPin,HIGH); //Buzzer'a güç göndererek ses çıkarmasını sağlıyoruz.
+
+ delay(1000);                  // 1 saniye boyunca çalmasını söylüyoruz..
+
+ digitalWrite(ledPinClose,1);  // kırmızı ışık yanmasını istiyoruz.
+
+ digitalWrite(buzzerPin,LOW); //Buzzerın gücünü keserek susmasını sağladık sağlıyoruz.
+
+ delay(1000);                 // 1 saniye boyunca susmasını söylüyoruz.
+
+        digitalWrite(ledPinClose,0); // kırmızı ışık yanmasını istiyoruz.
+
+        digitalWrite(buzzerPin,HIGH); //Buzzer'a güç göndererek ses çıkarmasını sağlıyoruz.
+
+ delay(1000);                  // 1 saniye boyunca çalmasını söylüyoruz.
+
+ digitalWrite(buzzerPin,LOW); //Buzzerın gücünü keserek susmasını sağlıyoruz.
+
+ delay(1000); 
+
+        digitalWrite(ledPinOpen,0); 
+
+        digitalWrite(ledPinClose,1);
+
+        delay(2000);
+
+        digitalWrite(ledPinClose,0);
+
+        enter_password = "";
+
+        control = 0;
+
+        counter = 0;
+
+      }
+
+    }
+
+  }
