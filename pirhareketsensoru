@@ -1,0 +1,65 @@
+int buzzerPin=7; 
+
+
+int led = 13; bağlı ledi)
+
+
+int sensor = 2; 
+
+
+int state = LOW; 
+
+
+int val = 0; 
+
+
+
+void setup() {
+
+pinMode(buzzerPin,OUTPUT); 
+
+pinMode(led, OUTPUT); 
+
+pinMode(sensor, INPUT); 
+
+Serial.begin(9600);
+
+}
+
+void loop(){
+
+val = digitalRead(sensor); 
+
+if (val == HIGH) { 
+
+digitalWrite(led, HIGH); 
+
+digitalWrite(buzzerPin,HIGH); 
+
+delay(100);
+
+if (state == LOW) {
+
+state = HIGH;
+
+}
+
+}
+
+else {
+
+digitalWrite(led, LOW);
+
+digitalWrite(buzzerPin,LOW); 
+
+delay(200);
+
+if (state == HIGH){
+
+state = LOW;
+
+}
+
+}
+
+}
